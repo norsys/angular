@@ -99,26 +99,27 @@ describe('ExampleViewer', () => {
     expect(component.tabs()![2].name).toBe('another-example.ts');
   });
 
-  it('should expandable be false when none of the example files have defined visibleLinesRange ', waitForAsync(async () => {
+  it('should displayExpandButton be false when there is no hidden lines in the example', waitForAsync(async () => {
     component.metadata = getMetadata();
     await component.renderExample();
-    expect(component.expandable()).toBeFalse();
+    expect(component.displayExpandButton()).toBeFalse();
   }));
 
-  it('should expandable be true when at least one example file has defined visibleLinesRange ', waitForAsync(async () => {
+  it('should displayExpandButton be true when there is hidden lines in the example', waitForAsync(async () => {
+    const expectedCodeSnippetContent =
+      'typescript code<br/>' + '<div class="line">hidden line</div>';
+
     component.metadata = getMetadata({
       files: [
-        {name: 'example.ts', content: 'typescript file'},
         {
-          name: 'example.html',
-          content: 'html file',
-          visibleLinesRange: '[1, 2]',
+          name: 'example.ts',
+          content: `<pre><code>${expectedCodeSnippetContent}</code></pre>`,
+          visibleLinesRange: '[1]',
         },
-        {name: 'another-example.ts', content: 'css file'},
       ],
     });
     await component.renderExample();
-    expect(component.expandable()).toBeTrue();
+    expect(component.displayExpandButton()).toBeTrue();
   }));
 
   it('should set exampleComponent when metadata contains path and preview is true', waitForAsync(async () => {
